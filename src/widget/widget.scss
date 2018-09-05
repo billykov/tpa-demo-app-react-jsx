@@ -30,5 +30,28 @@
     .hiddenBox {
       display: none;
     }
-
+    
 }
+.news-ticker {
+    display: flex;
+    height: 60px;
+    width: 100%;
+    flex-wrap: nowrap;
+    .news-type {
+
+        padding: 20px 10px;
+        background: red;
+    }    
+    .news-headline {
+        width: 100%;
+        padding: 20px 10px;
+        white-space: nowrap;
+        background: #d6d4d4;
+        overflow: hidden;
+    }    
+    .news-time {
+        padding: 20px 10px;
+        background: #c3c1c1;
+    }    
+}
+

@@ -63,8 +63,15 @@ define(['react', 'Wix'], function (React, Wix) {
                               <code className="json sample-content">{this.stringify(settingsUpdate)}</code>
                           </pre>
                         </div>
+
+                    </div>
+                    <div className="news-ticker"> 
+                        <div className="news-type">Latest</div>
+                        <div className="news-headline">The African city that China built ... at what cost?</div>
+                        <div className="news-time">12:30pm</div>
                     </div>
                 </div>
+
             )
         }
     });
