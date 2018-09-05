@@ -38,18 +38,37 @@
     width: 100%;
     flex-wrap: nowrap;
     .news-type {
-
+        font-family: inherit;
         padding: 20px 10px;
-        background: red;
+        background: rgb(187, 42, 42);
+        position: relative;
+        color: white;
+        z-index: 2;
+        &:after {
+            content: "";
+            position: absolute;
+            top: 0px;
+            width: 0px;
+            right: -30px;
+            height: 0px;
+            border-top: 30px solid transparent;
+            border-bottom: 30px solid transparent;
+            border-left: 30px solid rgb(187, 42, 42);
+        }
     }    
     .news-headline {
+        font-family: inherit;
         width: 100%;
-        padding: 20px 10px;
+        padding: 20px 40px 10px;
         white-space: nowrap;
-        background: #d6d4d4;
+        background: black;
+        color: white;
+        opacity: 0.7;
+        z-index: 1;
         overflow: hidden;
     }    
     .news-time {
+        font-family: inherit;
         padding: 20px 10px;
         background: #c3c1c1;
     }    
