@@ -3,12 +3,39 @@ define(['react', 'Wix'], function (React, Wix) {
         getInitialState: () => {
             return {
                 settingsUpdate: {},
+                title_text: "Latest",
                 showBox  : false
             }
         },
         componentDidMount: function () {
-            this.updateCompHeight(600);
+            //this.updateCompHeight(600);
             Wix.addEventListener(Wix.Events.SETTINGS_UPDATED, (data) => this.onSettingsUpdate(data));
+            console.log("getInstanceId:" + Wix.Utils.getInstanceId());
+
+            
+            
+/*
+            var http = require('http');
+
+            http.get('//www.kaleandkombucha.com/feed.xml', (resp) => {
+              let data = '';
+
+              resp.on('end', () => {
+                console.log(JSON.parse(data).explanation);
+                debugger;
+              });
+
+            }).on("error", (err) => {
+              console.log("Error: " + err.message);
+            }).on('end', () => {
+                console.log(JSON.parse(data).explanation);
+                debugger;
+              });
+
+              */
+
+
+
 
             // You can get the style params programmatically, un-comment the following snippet to see how it works:
             /*Wix.Styles.getStyleParams(function (style) {
@@ -21,6 +48,12 @@ define(['react', 'Wix'], function (React, Wix) {
              });*/
         },
         onSettingsUpdate: function (update) {
+            if (update.key == "title_text") {
+                this.setState({
+                    title_text: update.value
+                });
+            }; 
+                
             this.setState({
                 settingsUpdate: update,
                 showBox: true
@@ -46,29 +79,10 @@ define(['react', 'Wix'], function (React, Wix) {
           const {settingsUpdate} = this.state;
             return (
                 <div>
-                    <div className="wix-style-sample">
-                        <h3 className="sample-element sample-title">{"Demo App"}</h3>
-                        <p className="sample-element sample-content">{"Welcome to the Wix Demo App, let's play!"}</p>
-                        <form className="form">
-                            <input title="email" type="email" className="sample-element sample-input" placeholder="Enter text here" value={this.props.email}/>
-                        </form>
-                        <button className="sample-element sample-button">{"Click me"}</button>
-                        <br/>
-                        <a onClick={() => this.navToHome()}>{"Go to Home Page"}</a>
-                        <br/>
-                        <hr/>
-                        <div className={this.state.showBox ? "" : "hiddenBox"}>
-                          <h3 className="sample-element sample-title">{"Last settings update"}</h3>
-                          <pre>
-                              <code className="json sample-content">{this.stringify(settingsUpdate)}</code>
-                          </pre>
-                        </div>
-
-                    </div>
                     <div className="news-ticker"> 
-                        <div className="news-type">Latest</div>
-                        <div className="news-headline">The African city that China built ... at what cost?</div>
-                        <div className="news-time">12:30pm</div>
+                        <div className="news-type">{this.state.title_text}</div>
+                        <div className="news-headline">{"The African city that China built ... at what cost?"}</div>
+                        <div className="news-time">{"12:30pm"}</div>
                     </div>
                 </div>
 

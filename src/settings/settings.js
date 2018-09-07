@@ -8,6 +8,7 @@ import Design from './modules/design/design';
 import Animations from './modules/animations/animations';
 import Support from './modules/support/support';
 
+
 export default class settings extends React.Component {
     settingsUpdate (key, value) {
         const data = {key: key, value: value};
@@ -22,7 +23,7 @@ export default class settings extends React.Component {
                     <Main tab="Main"/>
                     <Settings tab="Settings" onUpdate={this.settingsUpdate}/>
                     <Layout tab="Layout" onUpdate={this.settingsUpdate}/>
-                    <Design tab="Design" onUpdate={this.settingsUpdate}/>
+                    <Design tab="Design" onUpdate={this.settingsUpdate} />
                     <Animations tab="Animations" onUpdate={this.settingsUpdate}/>
                     <hr className="divider-short"/>
                     <Support tab="Support"/>
