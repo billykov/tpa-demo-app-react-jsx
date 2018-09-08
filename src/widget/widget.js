@@ -4,39 +4,18 @@ define(['react', 'Wix'], function (React, Wix) {
             return {
                 settingsUpdate: {},
                 title_text: "Latest",
-                showBox  : false
+                showBox  : false,
+                posts: [],
+                postIndex: 0,
+                postToShow: 5,
+                animationDuration: 3000,
+                isLoading: true
             }
         },
         componentDidMount: function () {
-            //this.updateCompHeight(600);
             Wix.addEventListener(Wix.Events.SETTINGS_UPDATED, (data) => this.onSettingsUpdate(data));
-            console.log("getInstanceId:" + Wix.Utils.getInstanceId());
-
-            
-            
-/*
-            var http = require('http');
-
-            http.get('//www.kaleandkombucha.com/feed.xml', (resp) => {
-              let data = '';
-
-              resp.on('end', () => {
-                console.log(JSON.parse(data).explanation);
-                debugger;
-              });
-
-            }).on("error", (err) => {
-              console.log("Error: " + err.message);
-            }).on('end', () => {
-                console.log(JSON.parse(data).explanation);
-                debugger;
-              });
-
-              */
-
-
-
-
+            //console.log("getInstanceId:" + Wix.Utils.getInstanceId());
+    
             // You can get the style params programmatically, un-comment the following snippet to see how it works:
             /*Wix.Styles.getStyleParams(function (style) {
              console.log(style);
@@ -52,12 +31,51 @@ define(['react', 'Wix'], function (React, Wix) {
                 this.setState({
                     title_text: update.value
                 });
+            };
+            if (update.key == "feed_url") {
+                this.setState({
+                    feed_url: update.value
+                });
+                this.loadFeed(update.value);
             }; 
+             
                 
             this.setState({
                 settingsUpdate: update,
                 showBox: true
             }, this.updateCompHeight);
+        },
+        loadFeed: function(feed) {
+            $.get(feed, (response) => {
+                var newPosts = []
+                response = $(response).find('item').splice(0,this.state.postToShow);
+                $(response).each((i,post) => {
+                    newPosts.push({ 
+                    title: $(post).find('title').text(),
+                    link: $(post).find('link').text(),
+                    pubDate: new Date($(post).find('pubDate').text()).toDateString()
+                })
+                });              
+                this.startTicker();
+                this.setState({ posts: newPosts, isLoading: false });
+
+                
+            });
+        },
+        startTicker: function() {
+            setInterval(() => { 
+                $(".news-headline").each((i,post) => {
+                    if (this.state.postIndex == i) {
+                        $(post).fadeIn(1000);
+                    } else {
+                        $(post).fadeOut(500);    
+                    }
+                    
+                });
+                console.log('tick');
+                (this.state.postIndex+1) >= this.state.postToShow ? this.state.postIndex = 0 : this.state.postIndex++
+                
+            }, this.state.animationDuration);
         },
         updateCompHeight: (height) => {
             const desiredHeight = height || document.documentElement.scrollHeight;
@@ -77,12 +95,27 @@ define(['react', 'Wix'], function (React, Wix) {
         },
         render: function () {
           const {settingsUpdate} = this.state;
+          var content;
+          if (this.state.isLoading) {
+            content =  <div className="news-headline"> Loading... </div>;
+          } else {
+            var posts = this.state.posts.map(function(post,i){
+                return (
+                    <div className="news-headline" style={{display:i != 0 ? "none" : "show"}}> {post.title} <span className="news-time">({post.pubDate})</span></div>
+                );
+                
+
+            });
+            content = posts;
+            
+
+          }
             return (
                 <div>
                     <div className="news-ticker"> 
                         <div className="news-type">{this.state.title_text}</div>
-                        <div className="news-headline">{"The African city that China built ... at what cost?"}</div>
-                        <div className="news-time">{"12:30pm"}</div>
+                        {content}
+                        <div className="news-bg"></div>
                     </div>
                 </div>
 

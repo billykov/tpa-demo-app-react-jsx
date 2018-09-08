@@ -19,10 +19,9 @@ export default class settings extends React.Component {
     render () {
         return (
             <UI.appSettings>
-                <UI.panelTabs defaultTabIndex={0}>
-                    <Main tab="Main"/>
+                <UI.panelTabs defaultTabIndex={0} showTabNotification={0,"wow"}>
+                    <Main tab="Main" />
                     <Settings tab="Settings" onUpdate={this.settingsUpdate}/>
-                    <Layout tab="Layout" onUpdate={this.settingsUpdate}/>
                     <Design tab="Design" onUpdate={this.settingsUpdate} />
                     <Animations tab="Animations" onUpdate={this.settingsUpdate}/>
                     <hr className="divider-short"/>
@@ -33,3 +32,6 @@ export default class settings extends React.Component {
         )
     }
 }
+
+
+
