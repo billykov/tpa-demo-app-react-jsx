@@ -16,6 +16,43 @@ export default class settings extends React.Component {
         console.log(data);
     }
 
+    componentDidMount () {
+        console.log('componentDidMount');
+        Wix.addEventListener(Wix.Events.SITE_PUBLISHED, function(){
+        debugger;
+        });
+        var config = {
+                apiKey: "AIzaSyCrEcfR6yAPz2mm_EK5_dg5auPTdsuK5Lo",
+                authDomain: "wix-test-billy.firebaseapp.com",
+                databaseURL: "https://wix-test-billy.firebaseio.com",
+                projectId: "wix-test-billy",
+                storageBucket: "wix-test-billy.appspot.com",
+                messagingSenderId: "118952255688"
+            };
+        firebase.initializeApp(config);
+        var db = firebase.firestore();
+        db.settings({ timestampsInSnapshots: true });
+
+        var app_id = Wix.Utils.getInstanceId();
+        db.collection('settings').doc(app_id).get()
+        .then((snapshot) => {
+            if (snapshot.data()) {
+                console.log("snapshot: "+snapshot.data());
+                //debugger;
+            } else {
+                /* No settings stored */
+                //debugger;
+            }
+            
+        });
+
+    }
+
+    onSitePublished () {
+        console("yo bitch");
+        debugger;
+    }
+
     render () {
         return (
             <UI.appSettings>

@@ -9,11 +9,57 @@ define(['react', 'Wix'], function (React, Wix) {
                 postIndex: 0,
                 postToShow: 5,
                 animationDuration: 3000,
-                isLoading: true
+                isLoading: true,
+                db: {},
+                tickerStarted: false,
+                settingsToSave: {}
             }
         },
         componentDidMount: function () {
             Wix.addEventListener(Wix.Events.SETTINGS_UPDATED, (data) => this.onSettingsUpdate(data));
+            Wix.addEventListener(Wix.Events.SITE_PUBLISHED, (data) => this.onSitePublished(data));
+            
+            var config = {
+                apiKey: "AIzaSyCrEcfR6yAPz2mm_EK5_dg5auPTdsuK5Lo",
+                authDomain: "wix-test-billy.firebaseapp.com",
+                databaseURL: "https://wix-test-billy.firebaseio.com",
+                projectId: "wix-test-billy",
+                storageBucket: "wix-test-billy.appspot.com",
+                messagingSenderId: "118952255688"
+            };
+            firebase.initializeApp(config);
+            this.state.db = firebase.firestore();
+            this.state.db.settings({ timestampsInSnapshots: true });
+
+            
+            var app_id = Wix.Utils.getInstanceId();
+            this.state.db.collection('settings').doc(app_id).get()
+            .then((snapshot) => {
+                if (snapshot.data()) {
+                    console.log("snapshot: "+snapshot.data());
+                    if (snapshot.data().feed_url) {
+                        this.loadFeed(snapshot.data().feed_url);            
+                    }
+                } else {
+                    /* No settings stored */
+                    //debugger;
+                }
+                
+            });
+
+            
+            
+            /*
+            Wix.Data.Public.get("test", { scope: 'COMPONENT' }, 
+            function(sucess) {
+                console.log(sucess)
+            },
+            function(f) {
+                console.log(f);
+                debugger;
+            }
+            );
+            */
             //console.log("getInstanceId:" + Wix.Utils.getInstanceId());
     
             // You can get the style params programmatically, un-comment the following snippet to see how it works:
@@ -27,6 +73,7 @@ define(['react', 'Wix'], function (React, Wix) {
              });*/
         },
         onSettingsUpdate: function (update) {
+            console.log(update);
             if (update.key == "title_text") {
                 this.setState({
                     title_text: update.value
@@ -38,11 +85,15 @@ define(['react', 'Wix'], function (React, Wix) {
                 });
                 this.loadFeed(update.value);
             }; 
-             
-                
+
+
+
+            this.state.settingsToSave[update.key] = update.value;
+            console.log("settingsToSave: " + this.state.settingsToSave);
+
             this.setState({
                 settingsUpdate: update,
-                showBox: true
+                showBox: true, 
             }, this.updateCompHeight);
         },
         loadFeed: function(feed) {
@@ -56,7 +107,9 @@ define(['react', 'Wix'], function (React, Wix) {
                     pubDate: new Date($(post).find('pubDate').text()).toDateString()
                 })
                 });              
-                this.startTicker();
+                if (!this.state.tickerStarted) {
+                    this.startTicker()
+                };
                 this.setState({ posts: newPosts, isLoading: false });
 
                 
@@ -72,10 +125,14 @@ define(['react', 'Wix'], function (React, Wix) {
                     }
                     
                 });
-                console.log('tick');
+
                 (this.state.postIndex+1) >= this.state.postToShow ? this.state.postIndex = 0 : this.state.postIndex++
                 
             }, this.state.animationDuration);
+        },
+        onSitePublished: function() {
+            var app_id = Wix.Utils.getInstanceId();
+            this.state.db.collection('settings').doc(app_id).set(this.state.settingsToSave);
         },
         updateCompHeight: (height) => {
             const desiredHeight = height || document.documentElement.scrollHeight;
