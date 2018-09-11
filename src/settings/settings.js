@@ -66,7 +66,7 @@ export default class settings extends React.Component {
 
     render () {
         if (this.state.isLoading) {
-            return <div>Loading... </div>;
+            return <UI.preloader/>;
         } 
         return (
             <UI.appSettings>
