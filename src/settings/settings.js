@@ -10,6 +10,18 @@ import Support from './modules/support/support';
 
 
 export default class settings extends React.Component {
+    constructor (props) {
+        super(props);
+        this.state = { 
+            savedSettings: {
+                feed_url: "",
+                title_text: "Latest"
+            },
+            isLoading: true
+        };
+    }
+    
+
     settingsUpdate (key, value) {
         const data = {key: key, value: value};
         Wix.Settings.triggerSettingsUpdatedEvent(data);
@@ -18,9 +30,7 @@ export default class settings extends React.Component {
 
     componentDidMount () {
         console.log('componentDidMount');
-        Wix.addEventListener(Wix.Events.SITE_PUBLISHED, function(){
-        debugger;
-        });
+   
         var config = {
                 apiKey: "AIzaSyCrEcfR6yAPz2mm_EK5_dg5auPTdsuK5Lo",
                 authDomain: "wix-test-billy.firebaseapp.com",
@@ -34,32 +44,36 @@ export default class settings extends React.Component {
         db.settings({ timestampsInSnapshots: true });
 
         var app_id = Wix.Utils.getInstanceId();
+
         db.collection('settings').doc(app_id).get()
         .then((snapshot) => {
             if (snapshot.data()) {
-                console.log("snapshot: "+snapshot.data());
-                //debugger;
+                this.setState({
+                   savedSettings: { 
+                        feed_url: snapshot.data().feed_url,
+                        title_text: snapshot.data().title_text
+                    },
+                   isLoading: false
+                });
             } else {
                 /* No settings stored */
-                //debugger;
+                
             }
             
         });
 
     }
 
-    onSitePublished () {
-        console("yo bitch");
-        debugger;
-    }
-
     render () {
+        if (this.state.isLoading) {
+            return <div>Loading... </div>;
+        } 
         return (
             <UI.appSettings>
-                <UI.panelTabs defaultTabIndex={0} showTabNotification={0,"wow"}>
-                    <Main tab="Main" />
-                    <Settings tab="Settings" onUpdate={this.settingsUpdate}/>
-                    <Design tab="Design" onUpdate={this.settingsUpdate} />
+                <UI.panelTabs defaultTabIndex={0}>
+                    <Main tab="Main" className="btn-upgrade-banner" />
+                    <Settings tab="Settings" onUpdate={this.settingsUpdate} savedSettings={this.state.savedSettings} />
+                    <Design tab="Design" onUpdate={this.settingsUpdate} savedSettings={this.state.savedSettings} />
                     <Animations tab="Animations" onUpdate={this.settingsUpdate}/>
                     <hr className="divider-short"/>
                     <Support tab="Support"/>

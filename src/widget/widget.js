@@ -32,45 +32,27 @@ define(['react', 'Wix'], function (React, Wix) {
             this.state.db.settings({ timestampsInSnapshots: true });
 
             
+
             var app_id = Wix.Utils.getInstanceId();
+
             this.state.db.collection('settings').doc(app_id).get()
             .then((snapshot) => {
                 if (snapshot.data()) {
-                    console.log("snapshot: "+snapshot.data());
-                    if (snapshot.data().feed_url) {
-                        this.loadFeed(snapshot.data().feed_url);            
-                    }
+                    $.each(snapshot.data(),(DBKey, DBValue) => {
+                        if (DBKey == "feed_url") {
+                            this.loadFeed(DBValue);            
+                        } else {
+                            this.onSettingsUpdate({key: DBKey, value: DBValue});        
+                        }    
+                    });
+                    
                 } else {
                     /* No settings stored */
-                    //debugger;
+                    
                 }
                 
             });
 
-            
-            
-            /*
-            Wix.Data.Public.get("test", { scope: 'COMPONENT' }, 
-            function(sucess) {
-                console.log(sucess)
-            },
-            function(f) {
-                console.log(f);
-                debugger;
-            }
-            );
-            */
-            //console.log("getInstanceId:" + Wix.Utils.getInstanceId());
-    
-            // You can get the style params programmatically, un-comment the following snippet to see how it works:
-            /*Wix.Styles.getStyleParams(function (style) {
-             console.log(style);
-             });*/
-
-            // You can also get the style every time it changes, try this:
-            /*Wix.addEventListener(Wix.Events.STYLE_PARAMS_CHANGE, function (style) {
-             console.log(style);
-             });*/
         },
         onSettingsUpdate: function (update) {
             console.log(update);
@@ -87,8 +69,10 @@ define(['react', 'Wix'], function (React, Wix) {
             }; 
 
 
-
-            this.state.settingsToSave[update.key] = update.value;
+            if (update.key) {
+                this.state.settingsToSave[update.key] = update.value;    
+            } 
+            
             console.log("settingsToSave: " + this.state.settingsToSave);
 
             this.setState({
@@ -132,7 +116,7 @@ define(['react', 'Wix'], function (React, Wix) {
         },
         onSitePublished: function() {
             var app_id = Wix.Utils.getInstanceId();
-            this.state.db.collection('settings').doc(app_id).set(this.state.settingsToSave);
+            this.state.db.collection('settings').doc(app_id).update(this.state.settingsToSave);
         },
         updateCompHeight: (height) => {
             const desiredHeight = height || document.documentElement.scrollHeight;
@@ -170,7 +154,9 @@ define(['react', 'Wix'], function (React, Wix) {
             return (
                 <div>
                     <div className="news-ticker"> 
-                        <div className="news-type">{this.state.title_text}</div>
+                        <div className="news-type">
+                            <span className="news-type-text"> {this.state.title_text}</span>
+                        </div>
                         {content}
                         <div className="news-bg"></div>
                     </div>

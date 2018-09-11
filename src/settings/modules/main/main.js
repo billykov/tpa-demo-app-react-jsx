@@ -4,7 +4,6 @@ import React from 'react'
 export default class Main extends React.Component {
     onClick () {
         console.log('CTA clicked');
-
     }
 
     render () {
@@ -18,7 +17,8 @@ export default class Main extends React.Component {
                 <p>
                     Click to connect your feed.
                 </p>
-                <UI.button className="btn-confirm-primary" label="Connect feed" onClick={()=>this.onClick()}/>
+                <UI.button className="btn-confirm-primary" label="Connect feed"/>
+
                 <div className="main-bottom">
                   <hr className="divider-long"/>
                   <p>
