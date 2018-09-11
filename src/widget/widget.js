@@ -45,29 +45,26 @@ define(['react', 'Wix'], function (React, Wix) {
                             this.onSettingsUpdate({key: DBKey, value: DBValue});        
                         }    
                     });
-                    
                 } else {
-                    /* No settings stored */
-                    
+                    /* No settings stored */   
                 }
-                
             });
-
         },
         onSettingsUpdate: function (update) {
             console.log(update);
+            
             if (update.key == "title_text") {
                 this.setState({
                     title_text: update.value
                 });
             };
+
             if (update.key == "feed_url") {
                 this.setState({
                     feed_url: update.value
                 });
                 this.loadFeed(update.value);
             }; 
-
 
             if (update.key) {
                 this.state.settingsToSave[update.key] = update.value;    
@@ -77,7 +74,7 @@ define(['react', 'Wix'], function (React, Wix) {
 
             this.setState({
                 settingsUpdate: update,
-                showBox: true, 
+                showBox: true
             }, this.updateCompHeight);
         },
         loadFeed: function(feed) {
@@ -89,14 +86,12 @@ define(['react', 'Wix'], function (React, Wix) {
                     title: $(post).find('title').text(),
                     link: $(post).find('link').text(),
                     pubDate: new Date($(post).find('pubDate').text()).toDateString()
-                })
+                    })
                 });              
                 if (!this.state.tickerStarted) {
                     this.startTicker()
                 };
                 this.setState({ posts: newPosts, isLoading: false });
-
-                
             });
         },
         startTicker: function() {
@@ -106,8 +101,7 @@ define(['react', 'Wix'], function (React, Wix) {
                         $(post).fadeIn(1000);
                     } else {
                         $(post).fadeOut(500);    
-                    }
-                    
+                    } 
                 });
 
                 (this.state.postIndex+1) >= this.state.postToShow ? this.state.postIndex = 0 : this.state.postIndex++
@@ -148,8 +142,6 @@ define(['react', 'Wix'], function (React, Wix) {
 
             });
             content = posts;
-            
-
           }
             return (
                 <div>
@@ -161,7 +153,6 @@ define(['react', 'Wix'], function (React, Wix) {
                         <div className="news-bg"></div>
                     </div>
                 </div>
-
             )
         }
     });

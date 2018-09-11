@@ -20,7 +20,6 @@ export default class settings extends React.Component {
             isLoading: true
         };
     }
-    
 
     settingsUpdate (key, value) {
         const data = {key: key, value: value};
@@ -56,10 +55,8 @@ export default class settings extends React.Component {
                    isLoading: false
                 });
             } else {
-                /* No settings stored */
-                
+                /* No settings stored */   
             }
-            
         });
 
     }
